@@ -15,69 +15,66 @@ prompt.get(['Iterations (< 500)'], function (err, result) {
   let succesCounter = 0;
   let failedCounter = 0;
 
-  if(iterations < 500){
-
-      for (var i = 0; i <= iterations; ++i) {
-        (function(n) {
-          setTimeout(function(){
-
-            const options =  {
-              'method': 'POST',
-              'headers': {
-                'Authorization': authHeader,
-                'accept': 'application/json'
-              },
-              'json': true,
-              'url': apiUrl,
-            'body': {
-                "properties": {
-                  "dealname": "The New Deal",
-                  "amount": "350"
-                }
-              }
-            };
-            requestPromise(options)
-            .then(function (response) {
-              succesCounter++;
-              console.log(`${succesCounter} successful POSTs to /opportunities`);
-            })
-            .catch(function (err) {
-              failedCounter++
-              console.log(`ERROR: ${err}`);
-              console.log(`${failedCounter} failed`)
-            });
-
-
-          }, 1000);
-        }(i));
+  const postOpportunities = function (runCounter) {
+  //  i++
+    const options =  {
+      'method': 'POST',
+      'headers': {
+        'Authorization': authHeader,
+        'accept': 'application/json'
+      },
+      'json': true,
+      'url': apiUrl,
+    'body': {
+        "properties": {
+          "dealname": "The New Deal",
+          "amount": "350"
+        }
       }
-            //
-            // const options =  {
-            //   'method': 'POST',
-            //   'headers': {
-            //     'Authorization': authHeader,
-            //     'accept': 'application/json'
-            //   },
-            //   'json': true,
-            //   'url': apiUrl,
-            // 'body': {
-            //     "properties": {
-            //       "dealname": "The New Deal",
-            //       "amount": "350"
-            //     }
-            //   }
-            // };
-            // requestPromise(options)
-            // .then(function (response) {
-            //   succesCounter++;
-            //   console.log(`${succesCounter} successful POSTs to /opportunities`);
-            // })
-            // .catch(function (err) {
-            //   failedCounter++
-            //   console.log(`ERROR: ${err}`);
-            //   console.log(`${failedCounter} failed`)
-            // });
+    };
+    requestPromise(options)
+    .then(function (response) {
+      succesCounter++;
+      console.log(`${succesCounter} successful POSTs to /opportunities`);
+      // if(i <= iterations){
+      //   setTimeout(function(){
+      //     postOpportunities();
+      //   }, 5000);
+      // }
+    })
+    .catch(function (err) {
+      failedCounter++
+      console.log(`ERROR: ${err}`);
+      console.log(`${failedCounter} failed`);
+      // if(i <= iterations){
+      //   setTimeout(function(){
+      //     postOpportunities();
+      //   }, 5000);
+      // }
+    });
+  }
 
+
+
+  if(iterations < 500){
+      function slowLoop( count, interval, callback ) {
+        var i = 0;
+        next();
+        function next() {
+          if( callback( i ) !== false ) {
+                if( ++i < count ) {
+                  setTimeout( next, interval );
+                }
+          }
+        }
+      }
+
+      slowLoop( iterations, 1000, function( i ) {
+          postOpportunities()
+      });
+    // for (var i = 0; i <= iterations; ++i) {
+    //   postOpportunities();
+    // }
   } else {
     console.log("ERROR: Please enter an interation number less then 500")
   }
